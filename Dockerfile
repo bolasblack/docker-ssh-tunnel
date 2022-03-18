@@ -8,6 +8,6 @@ ssh \
 $SSH_DEBUG \
 -o StrictHostKeyChecking=no \
 -N $TUNNEL_HOST \
--L *:$LOCAL_PORT:$REMOTE_HOST:$REMOTE_PORT \
+-L $LOCAL_PORT:$REMOTE_PORT \
 && while true; do sleep 30; done;
 EXPOSE 1-65535
