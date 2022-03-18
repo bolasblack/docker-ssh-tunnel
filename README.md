@@ -1,14 +1,14 @@
-[![](https://images.microbadger.com/badges/image/cagataygurturk/docker-ssh-tunnel.svg)](https://microbadger.com/images/cagataygurturk/docker-ssh-tunnel)
-
 # Docker SSH Tunnel
 
 This Docker creates a simple SSH tunnel over a server. It is very useful when your container needs to access to an external protected resource. In this case this container might behave like a proxy to outer space inside your Docker network.
 
 ## Usage
 
+0. Enable `AllowTcpForwarding` of `/etc/ssh/sshd_config` on the remote server
+
 1. First you should create a config file in your local directory. For simplicity you can create this file in `~/.ssh` in your local machine.
 
-2. Inside `~/.ssh/config` put these lines:
+2. (Optional) Inside `~/.ssh/config` put these lines:
 
 ```
     Host mysql-tunnel # You can use any name
@@ -30,15 +30,13 @@ This Docker creates a simple SSH tunnel over a server. It is very useful when yo
     version: '2'
     services:
       mysql:
-        image: cagataygurturk/docker-ssh-tunnel
+        image: bolasblack/docker-ssh-tunnel
         volumes:
           - $HOME/.ssh:/root/ssh:ro
         environment:
-	  SSH_DEBUG: "-v"
-          TUNNEL_HOST: mysql-tunnel
-          REMOTE_HOST: tunneled-sql.corporate.internal.tld
-          LOCAL_PORT: 3306
-          REMOTE_PORT: 3306
+          LOCAL_PORT: '*:3306'
+          REMOTE_PORT: '127.0.0.1:3306' # or '/var/run/docker.sock'
+          SSH_REST_OPTS: "-v mysql@192.168.1.100"
 ```
 
 5. Run `docker-compose up -d`
